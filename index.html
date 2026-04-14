@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Love Countdown</title>
+
   <style>
     body {
       margin: 0;
@@ -11,41 +12,81 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #111827, #1f2937);
-      color: white;
-      font-family: Arial, sans-serif;
-      text-align: center;
+      background: radial-gradient(circle at top, #ffd6e7, #e7c6ff, #cdb4db);
+      font-family: "Segoe UI", sans-serif;
+      overflow: hidden;
     }
 
     .box {
-      padding: 32px;
-      max-width: 900px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      border-radius: 30px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(120, 80, 140, 0.2);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0px); }
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 24px;
+      color: #7a4e7f;
+      margin-bottom: 20px;
     }
 
     .main {
       font-size: 2.4rem;
       font-weight: bold;
-      margin-bottom: 18px;
+      color: #5e406d;
+      margin-bottom: 15px;
     }
 
     .sub {
-      font-size: 1.3rem;
-      margin: 10px 0;
-      opacity: 0.95;
+      font-size: 1.2rem;
+      color: #6d5670;
+      margin: 8px 0;
+    }
+
+    .note {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #8a708f;
+    }
+
+    /* 💖 Hearts */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 20px;
+      animation: rise linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes rise {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        transform: translateY(-110vh) scale(1.5);
+        opacity: 0;
+      }
     }
   </style>
 </head>
+
 <body>
+
   <div class="box">
-    <h1>♥ time left until meeting my love ♥</h1>
+    <h1>💖 𝕥𝕚𝕞𝕖 𝕝𝕖𝕗𝕥 𝕦𝕟𝕥𝕚𝕝 𝕞𝕖𝕖𝕥𝕚𝕟𝕘 𝕞𝕪 𝕝𝕠𝕧𝕖 💖</h1>
     <div class="main" id="mainTime">Loading...</div>
     <div class="sub" id="totalMinutes"></div>
     <div class="sub" id="totalSeconds"></div>
+    <div class="note">✨ 𝕖𝕧𝕖𝕣𝕪 𝕤𝕖𝕔𝕠𝕟𝕕 𝕓𝕣𝕚𝕟𝕘𝕤 𝕦𝕤 𝕔𝕝𝕠𝕤𝕖𝕣 ✨</div>
   </div>
 
   <script>
@@ -57,11 +98,11 @@
 
       if (diffMs <= 0) {
         document.getElementById("mainTime").textContent =
-          "0 days 0 h 0 min 0 sec";
+          "0 days 0 hours 0 minutes 0 seconds";
         document.getElementById("totalMinutes").textContent =
-          "minutes left: 0";
+          "Total minutes left: 0";
         document.getElementById("totalSeconds").textContent =
-          "seconds left: 0";
+          "Total seconds left: 0";
         return;
       }
 
@@ -74,17 +115,37 @@
       const seconds = totalSeconds % 60;
 
       document.getElementById("mainTime").textContent =
-        `${days} days ${hours} h ${minutes} min ${seconds} sec`;
+        `${days} 𝒹𝒶𝓎𝓈 ${hours} 𝒽 ${minutes} 𝓂𝒾𝓃 ${seconds} 𝓈𝑒𝒸`;
 
       document.getElementById("totalMinutes").textContent =
-        `minutes left: ${totalMinutes}`;
+        `𝓂𝒾𝓃𝓊𝓉𝑒𝓈 𝓁𝑒𝒻𝓉: ${totalMinutes}`;
 
       document.getElementById("totalSeconds").textContent =
-        `seconds left: ${totalSeconds}`;
+        `𝓈𝑒𝒸𝑜𝓃𝒹𝓈 𝓁𝑒𝒻𝓉: ${totalSeconds}`;
     }
 
     updateCountdown();
     setInterval(updateCountdown, 1000);
+
+    // 💖 generate floating hearts
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerHTML = "💖";
+
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = (3 + Math.random() * 4) + "s";
+      heart.style.fontSize = (16 + Math.random() * 20) + "px";
+
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 7000);
+    }
+
+    setInterval(createHeart, 300);
   </script>
+
 </body>
 </html>
