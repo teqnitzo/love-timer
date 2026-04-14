@@ -84,6 +84,7 @@
   <div class="box">
     <h1>💖 𝕥𝕚𝕞𝕖 𝕝𝕖𝕗𝕥 𝕦𝕟𝕥𝕚𝕝 𝕞𝕖𝕖𝕥𝕚𝕟𝕘 𝕞𝕪 𝕝𝕠𝕧𝕖 💖</h1>
     <div class="main" id="mainTime">Loading...</div>
+	<div class="sub" id="totalHours"></div>
     <div class="sub" id="totalMinutes"></div>
     <div class="sub" id="totalSeconds"></div>
   </div>
@@ -98,6 +99,8 @@
       if (diffMs <= 0) {
         document.getElementById("mainTime").textContent =
           "0 days 0 hours 0 minutes 0 seconds";
+		document.getElementById("totalHours").textContent =
+          "Total hours left: 0";  
         document.getElementById("totalMinutes").textContent =
           "Total minutes left: 0";
         document.getElementById("totalSeconds").textContent =
@@ -107,6 +110,7 @@
 
       const totalSeconds = Math.floor(diffMs / 1000);
       const totalMinutes = Math.floor(totalSeconds / 60);
+      const totalHours = Math.floor(totalSeconds / 3600);
 
       const days = Math.floor(totalSeconds / 86400);
       const hours = Math.floor((totalSeconds % 86400) / 3600);
@@ -114,13 +118,16 @@
       const seconds = totalSeconds % 60;
 
       document.getElementById("mainTime").textContent =
-        `${days} 𝒹𝒶𝓎𝓈 ${hours} 𝒽 ${minutes} 𝓂𝒾𝓃 ${seconds} 𝓈𝑒𝒸`;
+        `${days} 𝓭𝓪𝔂𝓼 ${hours} 𝓱 ${minutes} 𝓶𝓲𝓷 ${seconds} 𝓼𝓮𝓬`;
+		
+	  document.getElementById("totalHours").textContent =
+        `𝓱𝓸𝓾𝓻𝓼 𝓵𝓮𝓯𝓽: ${totalHours}`;	
 
       document.getElementById("totalMinutes").textContent =
-        `𝓂𝒾𝓃𝓊𝓉𝑒𝓈 𝓁𝑒𝒻𝓉: ${totalMinutes}`;
+        `𝓶𝓲𝓷𝓾𝓽𝓮𝓼 𝓵𝓮𝓯𝓽: ${totalMinutes}`;
 
       document.getElementById("totalSeconds").textContent =
-        `𝓈𝑒𝒸𝑜𝓃𝒹𝓈 𝓁𝑒𝒻𝓉: ${totalSeconds}`;
+        `𝓼𝓮𝓬𝓸𝓷𝓭𝓼 𝓵𝓮𝓯𝓽: ${totalSeconds}`;
     }
 
     updateCountdown();
