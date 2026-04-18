@@ -37,6 +37,11 @@
       color: #7a4e7f;
       margin-bottom: 20px;
     }
+	
+	h2 {
+      color: #7a4e7f;
+      margin-bottom: 20px;
+    }
 
     .main {
       font-size: 2.4rem;
@@ -87,6 +92,7 @@
 	<div class="sub" id="totalHours"></div>
     <div class="sub" id="totalMinutes"></div>
     <div class="sub" id="totalSeconds"></div>
+	<h2>✨𝙨𝙤𝙤𝙣✨</h2>
   </div>
 
   <script>
@@ -137,10 +143,11 @@
     function createHeart() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
-      heart.innerHTML = "💖";
+      const emojis = ["💖", "✨", "🍓", "💋", "💖", "🌴"];
+	  heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
 
       heart.style.left = Math.random() * 100 + "vw";
-      heart.style.animationDuration = (3 + Math.random() * 4) + "s";
+      heart.style.animationDuration = (5 + Math.random() * 4) + "s";
       heart.style.fontSize = (16 + Math.random() * 20) + "px";
 
       document.body.appendChild(heart);
