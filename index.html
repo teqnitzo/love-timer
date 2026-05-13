@@ -12,19 +12,50 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at top, #ffd6e7, #e7c6ff, #cdb4db);
+      background: linear-gradient(to bottom, #050816, #101632, #24173d);
       font-family: "Segoe UI", sans-serif;
       overflow: hidden;
+      transition: background 1s linear;
+    }
+
+    .sky-object {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 1s linear, transform 1s linear;
+    }
+
+    .moon {
+      width: 90px;
+      height: 90px;
+      top: 70px;
+      right: 90px;
+      background: radial-gradient(circle at 35% 35%, #fffdf2, #d8d0ff 60%, #9b94c9);
+      box-shadow: 0 0 35px rgba(230, 220, 255, 0.8);
+    }
+
+    .sun {
+      width: 120px;
+      height: 120px;
+      left: 80px;
+      bottom: -160px;
+      background: radial-gradient(circle, #fff4a3, #ffb347 55%, #ff7b54);
+      box-shadow: 0 0 60px rgba(255, 180, 80, 0.9);
+      opacity: 0;
     }
 
     .box {
-      background: rgba(255, 255, 255, 0.6);
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.55);
       backdrop-filter: blur(12px);
       padding: 40px;
       border-radius: 30px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(120, 80, 140, 0.2);
+      box-shadow: 0 20px 50px rgba(120, 80, 140, 0.25);
       animation: float 4s ease-in-out infinite;
+      transition: background 1s linear, box-shadow 1s linear;
     }
 
     @keyframes float {
@@ -34,36 +65,35 @@
     }
 
     h1 {
-      color: #7a4e7f;
+      color: #f4d9ff;
       margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255, 220, 255, 0.4);
+      transition: color 1s linear;
     }
 
     .main {
       font-size: 2.4rem;
       font-weight: bold;
-      color: #5e406d;
+      color: #fff0ff;
       margin-bottom: 15px;
+      text-shadow: 0 0 12px rgba(255, 220, 255, 0.4);
+      transition: color 1s linear;
     }
 
     .sub {
       font-size: 1.2rem;
-      color: #6d5670;
+      color: #f2d6ff;
       margin: 8px 0;
+      transition: color 1s linear;
     }
 
-    .note {
-      margin-top: 15px;
-      font-size: 0.9rem;
-      color: #8a708f;
-    }
-
-    /* 💖 Hearts */
     .heart {
       position: fixed;
       bottom: -20px;
       font-size: 20px;
       animation: rise linear infinite;
       opacity: 0.8;
+      z-index: 1;
     }
 
     @keyframes rise {
@@ -76,38 +106,150 @@
         opacity: 0;
       }
     }
+
+    /* soft stars */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
+      background-size: 90px 90px, 140px 140px;
+      background-position: 20px 30px, 70px 100px;
+      opacity: var(--stars-opacity, 0.8);
+      transition: opacity 1s linear;
+      pointer-events: none;
+      z-index: 0;
+    }
   </style>
 </head>
 
 <body>
 
-  <div class="box">
-    <h1>💖 𝕥𝕚𝕞𝕖 𝕝𝕖𝕗𝕥 𝕦𝕟𝕥𝕚𝕝 𝕞𝕖𝕖𝕥𝕚𝕟𝕘 𝕞𝕪 𝕝𝕠𝕧𝕖 💖</h1>
+  <div class="sky-object moon" id="moon"></div>
+  <div class="sky-object sun" id="sun"></div>
+
+  <div class="box" id="box">
+    <h1 id="title">💗 𝕥𝕚𝕞𝕖 𝕝𝕖𝕗𝕥 𝕦𝕟𝕥𝕚𝕝 𝕞𝕖𝕖𝕥𝕚𝕟𝕘 𝕞𝕪 𝕝𝕠𝕧𝕖 💗</h1>
     <div class="main" id="mainTime">Loading...</div>
-	<div class="sub" id="totalHours"></div>
+    <div class="sub" id="totalHours"></div>
     <div class="sub" id="totalMinutes"></div>
     <div class="sub" id="totalSeconds"></div>
+	<div class="sub" id="totalMilliseconds"></div>
   </div>
 
   <script>
+
+    const startDate = new Date("2026-05-13T07:00:00Z");
     const targetDate = new Date("2026-06-26T20:10:00Z");
+
+    function clamp(value, min, max) {
+      return Math.min(Math.max(value, min), max);
+    }
+
+    function mixColor(color1, color2, amount) {
+      const c1 = color1.match(/\w\w/g).map(x => parseInt(x, 16));
+      const c2 = color2.match(/\w\w/g).map(x => parseInt(x, 16));
+
+      const mixed = c1.map((v, i) =>
+        Math.round(v + (c2[i] - v) * amount)
+      );
+
+      return "#" + mixed.map(v => v.toString(16).padStart(2, "0")).join("");
+    }
+	
+	function nnn(number) {
+	return String(number).replace(/[0-9]/g, digit => {
+		const map = {
+		"0": "𝟎",
+		"1": "𝟏",
+		"2": "𝟐",
+		"3": "𝟑",
+		"4": "𝟒",
+		"5": "𝟓",
+		"6": "𝟔",
+		"7": "𝟕",
+		"8": "𝟖",
+		"9": "𝟗"
+		};
+	
+		return map[digit];
+	});
+	}	
+
+    function updateSky(diffMs) {
+      const now = new Date();
+
+      const totalJourney = targetDate - startDate;
+      const elapsed = now - startDate;
+
+      const progress = clamp(elapsed / totalJourney, 0, 1);
+
+      /*
+        0 = deep night
+        1 = sunrise / bright morning
+      */
+      const topColor = mixColor("050816", "ffd6a5", progress);
+      const middleColor = mixColor("101632", "ffafcc", progress);
+      const bottomColor = mixColor("24173d", "bde0fe", progress);
+
+      document.body.style.background =
+        `linear-gradient(to bottom, ${topColor}, ${middleColor}, ${bottomColor})`;
+
+      document.documentElement.style.setProperty(
+        "--stars-opacity",
+        0.85 - progress * 0.85
+      );
+
+      const moon = document.getElementById("moon");
+      const sun = document.getElementById("sun");
+      const box = document.getElementById("box");
+      const title = document.getElementById("title");
+      const mainTime = document.getElementById("mainTime");
+      const subs = document.querySelectorAll(".sub");
+
+      moon.style.opacity = 1 - progress;
+      moon.style.transform = `translateY(${progress * 230}px)`;
+
+      sun.style.opacity = progress;
+      sun.style.transform = `translateY(${-progress * 230}px)`;
+
+      box.style.background = `rgba(255, 255, 255, ${0.45 + progress * 0.25})`;
+      box.style.boxShadow =
+        `0 20px 60px rgba(255, 160, 190, ${0.2 + progress * 0.25})`;
+
+      const textColor = mixColor("f4d9ff", "7a4e7f", progress);
+      const mainColor = mixColor("fff0ff", "5e406d", progress);
+      const subColor = mixColor("f2d6ff", "6d5670", progress);
+
+      title.style.color = textColor;
+      mainTime.style.color = mainColor;
+
+      subs.forEach(sub => {
+        sub.style.color = subColor;
+      });
+    }
 
     function updateCountdown() {
       const now = new Date();
       const diffMs = targetDate - now;
 
+      updateSky(diffMs);
+
       if (diffMs <= 0) {
         document.getElementById("mainTime").textContent =
           "0 days 0 hours 0 minutes 0 seconds";
-		document.getElementById("totalHours").textContent =
-          "Total hours left: 0";  
+        document.getElementById("totalHours").textContent =
+          "𝓱𝓸𝓾𝓻𝓼 𝓵𝓮𝓯𝓽: 0";
         document.getElementById("totalMinutes").textContent =
-          "Total minutes left: 0";
+          "𝓶𝓲𝓷𝓾𝓽𝓮𝓼 𝓵𝓮𝓯𝓽: 0";
         document.getElementById("totalSeconds").textContent =
-          "Total seconds left: 0";
+          "𝓼𝓮𝓬𝓸𝓷𝓭𝓼 𝓵𝓮𝓯𝓽: 0";
         return;
       }
 
+	  const totalMilliseconds = Math.floor(diffMs);
       const totalSeconds = Math.floor(diffMs / 1000);
       const totalMinutes = Math.floor(totalSeconds / 60);
       const totalHours = Math.floor(totalSeconds / 3600);
@@ -118,31 +260,34 @@
       const seconds = totalSeconds % 60;
 
       document.getElementById("mainTime").textContent =
-        `${days} 𝓭𝓪𝔂𝓼 ${hours} 𝓱 ${minutes} 𝓶𝓲𝓷 ${seconds} 𝓼𝓮𝓬`;
-		
-	  document.getElementById("totalHours").textContent =
-        `𝓱𝓸𝓾𝓻𝓼 𝓵𝓮𝓯𝓽: ${totalHours}`;	
+        `${nnn(days)} 𝖉𝖆𝖞𝖘 ${nnn(hours)} 𝖍 ${nnn(minutes)} 𝖒𝖎𝖓 ${nnn(seconds)} 𝖘𝖊𝖈`;
+
+      document.getElementById("totalHours").textContent =
+        `𝖍𝖔𝖚𝖗𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalHours)}`;
 
       document.getElementById("totalMinutes").textContent =
-        `𝓶𝓲𝓷𝓾𝓽𝓮𝓼 𝓵𝓮𝓯𝓽: ${totalMinutes}`;
+        `𝖒𝖎𝖓𝖚𝖙𝖊𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalMinutes)}`;
 
       document.getElementById("totalSeconds").textContent =
-        `𝓼𝓮𝓬𝓸𝓷𝓭𝓼 𝓵𝓮𝓯𝓽: ${totalSeconds}`;
+        `𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalSeconds)}`;
+		
+      document.getElementById("totalMilliseconds").textContent =
+        `𝖒𝖎𝖑𝖑𝖎𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalMilliseconds)}`;		
     }
 
     updateCountdown();
-    setInterval(updateCountdown, 1000);
+    setInterval(updateCountdown, 10);
 
-    // 💖 generate floating hearts
     function createHeart() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
-      const emojis = ["💖", "✨", "🍓", "💋", "💖", "🌴"];
-	  heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+
+      const emojis = ["💗", "✨", "⭐", "🪐", "🌚", "🌞"];
+      heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
 
       heart.style.left = Math.random() * 100 + "vw";
-      heart.style.animationDuration = (5 + Math.random() * 4) + "s";
-      heart.style.fontSize = (16 + Math.random() * 20) + "px";
+      heart.style.animationDuration = (10 + Math.random() * 4) + "s";
+      heart.style.fontSize = (12 + Math.random() * 20) + "px";
 
       document.body.appendChild(heart);
 
