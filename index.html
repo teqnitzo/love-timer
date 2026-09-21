@@ -540,8 +540,8 @@
 
   <div class="box" id="box">
     <div class="tiny-love">💗 bunny 🐰 countdown 💗</div>
-    <h1 id="title">baby I love you so much!!!!</h1>
-    <div class="kiss-line">every second we are closer and closer!!!! 💋🌊</div>
+    <h1 id="title">!!!!</h1>
+    <div class="kiss-line">every second we are getting closer and closer ^-^ 💋</div>
 
     <div class="main" id="mainTime">Loading...</div>
     <div class="sub" id="totalHours"></div>
@@ -549,7 +549,7 @@
     <div class="sub" id="totalSeconds"></div>
     <div class="sub" id="totalMilliseconds"></div>
 
-    <div class="footer-love">✨ until our next kiss, hug and sea of love ✨</div>
+    <div class="footer-love">✨ 🌸 ✨</div>
   </div>
 
   <script>
@@ -651,15 +651,15 @@
 
       if (diffMs <= 0) {
         document.getElementById("mainTime").textContent =
-          "𝟎 𝖉𝖆𝖞𝖘 𝟎 𝖍 𝟎 𝖒𝖎𝖓 𝟎 𝖘𝖊𝖈";
+          "𝟎 days 𝟎 h 𝟎 min 𝟎 sec";
         document.getElementById("totalHours").textContent =
-          "𝖍𝖔𝖚𝖗𝖘 𝖑𝖊𝖋𝖙: 𝟎";
+          "hours: 𝟎";
         document.getElementById("totalMinutes").textContent =
-          "𝖒𝖎𝖓𝖚𝖙𝖊𝖘 𝖑𝖊𝖋𝖙: 𝟎";
+          "minutes: 𝟎";
         document.getElementById("totalSeconds").textContent =
-          "𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: 𝟎";
+          "seconds: 𝟎";
         document.getElementById("totalMilliseconds").textContent =
-          "𝖒𝖎𝖑𝖑𝖎𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: 𝟎";
+          "milliseconds: 𝟎";
         return;
       }
 
@@ -674,19 +674,19 @@
       const seconds = totalSeconds % 60;
 
       document.getElementById("mainTime").textContent =
-        `${nnn(days)} 𝖉𝖆𝖞𝖘 ${nnn(hours)} 𝖍 ${nnn(minutes)} 𝖒𝖎𝖓 ${nnn(seconds)} 𝖘𝖊𝖈`;
+        `${nnn(days)} days ${nnn(hours)} h ${nnn(minutes)} min ${nnn(seconds)} sec`;
 
       document.getElementById("totalHours").textContent =
-        `𝖍𝖔𝖚𝖗𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalHours)}`;
+        `hours: ${nnn(totalHours)}`;
 
       document.getElementById("totalMinutes").textContent =
-        `𝖒𝖎𝖓𝖚𝖙𝖊𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalMinutes)}`;
+        `minutes: ${nnn(totalMinutes)}`;
 
       document.getElementById("totalSeconds").textContent =
-        `𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalSeconds)}`;
+        `seconds: ${nnn(totalSeconds)}`;
 
       document.getElementById("totalMilliseconds").textContent =
-        `𝖒𝖎𝖑𝖑𝖎𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalMilliseconds)}`;
+        `milliseconds: ${nnn(totalMilliseconds)}`;
     }
 
     updateCountdown();
@@ -696,7 +696,7 @@
       const heart = document.createElement("div");
       heart.classList.add("heart");
 
-      const emojis = ["💗", "💖", "💕", "✨", "💋", "🌊", "🌸"];
+      const emojis = ["💗", "💖", "💕", "✨", "💋", "🌸"];
       heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
 
       heart.style.left = Math.random() * 100 + "vw";
