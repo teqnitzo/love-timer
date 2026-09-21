@@ -6,85 +6,431 @@
   <title>Love Countdown</title>
 
   <style>
+    :root {
+      --sky-top: #120b24;
+      --sky-mid: #3a1f52;
+      --sky-bottom: #ff8fb1;
+
+      --sea-top: #ff9dc1;
+      --sea-bottom: #5a2f75;
+
+      --stars-opacity: 0.75;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(to bottom, #050816, #101632, #24173d);
       font-family: "Segoe UI", sans-serif;
-      overflow: hidden;
+      background: linear-gradient(to bottom, var(--sky-top), var(--sky-mid), var(--sky-bottom));
       transition: background 1s linear;
+      position: relative;
+    }
+
+    /* sky stars */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,220,240,0.8) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px);
+      background-size: 110px 110px, 180px 180px, 240px 240px;
+      background-position: 30px 20px, 90px 120px, 180px 70px;
+      opacity: var(--stars-opacity);
+      pointer-events: none;
+      z-index: 0;
+      transition: opacity 1s linear;
+    }
+
+    .glow-cloud {
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(70px);
+      opacity: 0.35;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .cloud1 {
+      width: 340px;
+      height: 180px;
+      top: 12%;
+      left: 8%;
+      background: rgba(255, 155, 196, 0.55);
+    }
+
+    .cloud2 {
+      width: 300px;
+      height: 160px;
+      top: 8%;
+      right: 10%;
+      background: rgba(255, 217, 137, 0.45);
     }
 
     .sky-object {
       position: fixed;
       border-radius: 50%;
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
       transition: opacity 1s linear, transform 1s linear;
     }
 
     .moon {
-      width: 90px;
-      height: 90px;
-      top: 70px;
-      right: 90px;
-      background: radial-gradient(circle at 35% 35%, #fffdf2, #d8d0ff 60%, #9b94c9);
-      box-shadow: 0 0 35px rgba(230, 220, 255, 0.8);
+      width: 95px;
+      height: 95px;
+      top: 65px;
+      right: 85px;
+      background: radial-gradient(circle at 35% 35%, #fffdf8, #ffe8f3 55%, #d6b2ff);
+      box-shadow: 0 0 45px rgba(255, 230, 247, 0.95);
     }
 
     .sun {
-      width: 120px;
-      height: 120px;
-      left: 80px;
-      bottom: -160px;
-      background: radial-gradient(circle, #fff4a3, #ffb347 55%, #ff7b54);
-      box-shadow: 0 0 60px rgba(255, 180, 80, 0.9);
+      width: 130px;
+      height: 130px;
+      left: 70px;
+      top: 70px;
+      background: radial-gradient(circle, #fff4b5, #ffb38a 55%, #ff6f91);
+      box-shadow: 0 0 70px rgba(255, 166, 122, 0.9);
       opacity: 0;
+    }
+
+    .sea {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 40vh;
+      background: linear-gradient(to bottom, var(--sea-top), var(--sea-bottom));
+      z-index: 0;
+      transition: background 1s linear;
+      overflow: hidden;
+    }
+
+    .sea::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0.22), rgba(255,255,255,0.02) 30%),
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.10) 0px,
+          rgba(255,255,255,0.10) 2px,
+          transparent 2px,
+          transparent 18px
+        );
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .reflection {
+      position: fixed;
+      width: 180px;
+      height: 280px;
+      right: 45px;
+      top: 150px;
+      background: radial-gradient(ellipse at top, rgba(255, 235, 247, 0.40), rgba(255,255,255,0.06) 60%, transparent 75%);
+      filter: blur(10px);
+      transform: rotate(3deg);
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 1s linear, transform 1s linear;
+    }
+
+    .wave {
+      position: absolute;
+      left: -10%;
+      width: 120%;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      filter: blur(1px);
+      animation: waveMove linear infinite;
+    }
+
+    .wave1 {
+      height: 90px;
+      bottom: 100px;
+      animation-duration: 10s;
+    }
+
+    .wave2 {
+      height: 70px;
+      bottom: 55px;
+      background: rgba(255,255,255,0.10);
+      animation-duration: 14s;
+      animation-direction: reverse;
+    }
+
+    .wave3 {
+      height: 60px;
+      bottom: 15px;
+      background: rgba(255,255,255,0.08);
+      animation-duration: 18s;
+    }
+
+    @keyframes waveMove {
+      0%   { transform: translateX(-2%) translateY(0); }
+      50%  { transform: translateX(2%) translateY(-3px); }
+      100% { transform: translateX(-2%) translateY(0); }
+    }
+
+    /* ISLAND */
+    .island-scene {
+      position: absolute;
+      left: 50%;
+      bottom: 55px;
+      transform: translateX(-50%);
+      width: 360px;
+      height: 220px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .island-shadow {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      width: 220px;
+      height: 28px;
+      transform: translateX(-50%);
+      background: rgba(78, 26, 87, 0.35);
+      border-radius: 50%;
+      filter: blur(8px);
+    }
+
+    .island {
+      position: absolute;
+      left: 50%;
+      bottom: 25px;
+      width: 230px;
+      height: 85px;
+      transform: translateX(-50%);
+      background: linear-gradient(to bottom, #ffd79c, #f4b97d 65%, #db9365);
+      border-radius: 48% 52% 42% 58% / 55% 58% 42% 45%;
+      box-shadow:
+        inset 0 10px 18px rgba(255,255,255,0.22),
+        0 10px 18px rgba(114, 45, 67, 0.18);
+    }
+
+    .island-highlight {
+      position: absolute;
+      left: 115px;
+      bottom: 84px;
+      width: 80px;
+      height: 20px;
+      background: rgba(255, 245, 220, 0.35);
+      border-radius: 50%;
+      filter: blur(3px);
+      transform: rotate(-6deg);
+    }
+
+    .palm-trunk {
+      position: absolute;
+      left: 138px;
+      bottom: 84px;
+      width: 18px;
+      height: 110px;
+      background: linear-gradient(to bottom, #8b5a3f, #6f402c);
+      border-radius: 18px;
+      transform: rotate(-16deg);
+      box-shadow: inset -2px 0 0 rgba(255,255,255,0.12);
+    }
+
+    .palm-ring {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: rgba(75, 39, 22, 0.24);
+      border-radius: 2px;
+    }
+
+    .leaf {
+      position: absolute;
+      width: 105px;
+      height: 34px;
+      background: linear-gradient(to right, #7de39d, #38a56a);
+      border-radius: 0 100px 100px 100px;
+      transform-origin: 10px 17px;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.08);
+    }
+
+    .leaf::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 16px;
+      width: 80px;
+      height: 2px;
+      background: rgba(255,255,255,0.22);
+      border-radius: 2px;
+    }
+
+    .leaf1 { left: 104px; bottom: 170px; transform: rotate(-35deg); }
+    .leaf2 { left: 118px; bottom: 182px; transform: rotate(-8deg); width: 112px; }
+    .leaf3 { left: 130px; bottom: 170px; transform: rotate(18deg); width: 110px; }
+    .leaf4 { left: 86px;  bottom: 154px; transform: rotate(-62deg); width: 94px; }
+    .leaf5 { left: 150px; bottom: 152px; transform: rotate(45deg); width: 92px; }
+
+    .umbrella-pole {
+      position: absolute;
+      right: 85px;
+      bottom: 84px;
+      width: 4px;
+      height: 52px;
+      background: #8c5a55;
+      border-radius: 4px;
+    }
+
+    .umbrella-top {
+      position: absolute;
+      right: 60px;
+      bottom: 125px;
+      width: 62px;
+      height: 34px;
+      background: repeating-linear-gradient(
+        to right,
+        #ff7aa8 0 12px,
+        #fff1f6 12px 24px
+      );
+      border-radius: 62px 62px 8px 8px;
+      box-shadow: 0 5px 12px rgba(135, 59, 95, 0.12);
+    }
+
+    .umbrella-top::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 8px;
+      background:
+        radial-gradient(circle at 8px 0, transparent 7px, rgba(0,0,0,0.0) 7px),
+        linear-gradient(to right, transparent 0);
+    }
+
+    .lounger {
+      position: absolute;
+      right: 108px;
+      bottom: 72px;
+      width: 68px;
+      height: 10px;
+      background: #fff0f6;
+      border-radius: 10px;
+      transform: rotate(-18deg);
+      box-shadow: 0 2px 8px rgba(86, 35, 57, 0.16);
+    }
+
+    .lounger::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -10px;
+      width: 38px;
+      height: 10px;
+      background: #ffd0e3;
+      border-radius: 10px 10px 4px 4px;
+      transform: rotate(-10deg);
+      transform-origin: left bottom;
+    }
+
+    .lounger::after {
+      content: "";
+      position: absolute;
+      left: 10px;
+      bottom: -10px;
+      width: 2px;
+      height: 12px;
+      background: #8c5a55;
+      box-shadow: 36px 0 0 #8c5a55, 48px 0 0 #8c5a55;
+    }
+
+    .island-heart {
+      position: absolute;
+      left: 168px;
+      bottom: 98px;
+      font-size: 16px;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.35));
+      animation: islandPulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes islandPulse {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.16); opacity: 1; }
     }
 
     .box {
       position: relative;
-      z-index: 2;
-      background: rgba(255, 255, 255, 0.55);
-      backdrop-filter: blur(12px);
-      padding: 40px;
-      border-radius: 30px;
+      z-index: 3;
+      width: min(92vw, 700px);
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      padding: 38px 34px;
+      border-radius: 34px;
       text-align: center;
-      box-shadow: 0 20px 50px rgba(120, 80, 140, 0.25);
-      animation: float 4s ease-in-out infinite;
+      box-shadow:
+        0 20px 60px rgba(255, 105, 156, 0.25),
+        inset 0 0 0 1px rgba(255,255,255,0.20);
+      animation: float 4.5s ease-in-out infinite;
       transition: background 1s linear, box-shadow 1s linear;
+      border: 1px solid rgba(255,255,255,0.18);
     }
 
     @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-8px); }
+      0%   { transform: translateY(0px); }
+      50%  { transform: translateY(-8px); }
       100% { transform: translateY(0px); }
     }
 
+    .tiny-love {
+      font-size: 1rem;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      color: #ffe7f3;
+      text-shadow: 0 0 12px rgba(255, 215, 235, 0.45);
+    }
+
     h1 {
-      color: #f4d9ff;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px rgba(255, 220, 255, 0.4);
+      color: #fff0f8;
+      margin: 0 0 16px;
+      font-size: clamp(1.6rem, 2.8vw, 2.35rem);
+      text-shadow: 0 0 16px rgba(255, 215, 240, 0.45);
       transition: color 1s linear;
+    }
+
+    .kiss-line {
+      font-size: 1.02rem;
+      color: #ffe0ef;
+      margin-bottom: 20px;
+      opacity: 0.95;
     }
 
     .main {
-      font-size: 2.4rem;
-      font-weight: bold;
-      color: #fff0ff;
-      margin-bottom: 15px;
-      text-shadow: 0 0 12px rgba(255, 220, 255, 0.4);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: #fff6fb;
+      margin-bottom: 16px;
+      text-shadow: 0 0 18px rgba(255, 220, 245, 0.45);
       transition: color 1s linear;
+      line-height: 1.2;
     }
 
     .sub {
-      font-size: 1.2rem;
-      color: #f2d6ff;
-      margin: 8px 0;
+      font-size: 1.12rem;
+      color: #ffe6f6;
+      margin: 10px 0;
       transition: color 1s linear;
+      text-shadow: 0 0 10px rgba(255,255,255,0.18);
     }
 
     .heart {
@@ -92,57 +438,123 @@
       bottom: -20px;
       font-size: 20px;
       animation: rise linear infinite;
-      opacity: 0.8;
-      z-index: 1;
+      opacity: 0.9;
+      z-index: 2;
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(255, 160, 200, 0.4));
     }
 
     @keyframes rise {
       0% {
-        transform: translateY(0) scale(1);
-        opacity: 0.9;
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 0.95;
       }
       100% {
-        transform: translateY(-110vh) scale(1.5);
+        transform: translateY(-110vh) scale(1.4) rotate(12deg);
         opacity: 0;
       }
     }
 
-    /* soft stars */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px),
-        radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px);
-      background-size: 90px 90px, 140px 140px;
-      background-position: 20px 30px, 70px 100px;
-      opacity: var(--stars-opacity, 0.8);
-      transition: opacity 1s linear;
-      pointer-events: none;
-      z-index: 0;
+    .footer-love {
+      margin-top: 18px;
+      font-size: 1rem;
+      color: #fff0f7;
+      opacity: 0.95;
+    }
+
+    @media (max-width: 700px) {
+      .box {
+        padding: 28px 22px;
+        border-radius: 28px;
+      }
+
+      .moon {
+        right: 24px;
+        top: 24px;
+        width: 75px;
+        height: 75px;
+      }
+
+      .sun {
+        left: 24px;
+        top: 24px;
+        width: 90px;
+        height: 90px;
+      }
+
+      .reflection {
+        right: 0;
+        width: 130px;
+      }
+
+      .island-scene {
+        width: 280px;
+        transform: translateX(-50%) scale(0.84);
+        transform-origin: bottom center;
+        bottom: 44px;
+      }
     }
   </style>
 </head>
 
 <body>
+  <div class="glow-cloud cloud1"></div>
+  <div class="glow-cloud cloud2"></div>
 
   <div class="sky-object moon" id="moon"></div>
   <div class="sky-object sun" id="sun"></div>
+  <div class="reflection" id="reflection"></div>
+
+  <div class="sea" id="sea">
+    <div class="island-scene">
+      <div class="island-shadow"></div>
+      <div class="island"></div>
+      <div class="island-highlight"></div>
+
+      <div class="palm-trunk">
+        <div class="palm-ring" style="top: 12px;"></div>
+        <div class="palm-ring" style="top: 27px;"></div>
+        <div class="palm-ring" style="top: 42px;"></div>
+        <div class="palm-ring" style="top: 57px;"></div>
+        <div class="palm-ring" style="top: 72px;"></div>
+        <div class="palm-ring" style="top: 87px;"></div>
+      </div>
+
+      <div class="leaf leaf1"></div>
+      <div class="leaf leaf2"></div>
+      <div class="leaf leaf3"></div>
+      <div class="leaf leaf4"></div>
+      <div class="leaf leaf5"></div>
+
+      <div class="umbrella-pole"></div>
+      <div class="umbrella-top"></div>
+      <div class="lounger"></div>
+
+      <div class="island-heart">💗</div>
+    </div>
+
+    <div class="wave wave1"></div>
+    <div class="wave wave2"></div>
+    <div class="wave wave3"></div>
+  </div>
 
   <div class="box" id="box">
-    <h1 id="title">💗 𝕥𝕚𝕞𝕖 𝕝𝕖𝕗𝕥 𝕦𝕟𝕥𝕚𝕝 𝕞𝕖𝕖𝕥𝕚𝕟𝕘 𝕞𝕪 𝕝𝕠𝕧𝕖 💗</h1>
+    <div class="tiny-love">💗 bunny 🐰 countdown 💗</div>
+    <h1 id="title">baby I love you so much!!!!</h1>
+    <div class="kiss-line">every second we are closer and closer!!!! 💋🌊</div>
+
     <div class="main" id="mainTime">Loading...</div>
     <div class="sub" id="totalHours"></div>
     <div class="sub" id="totalMinutes"></div>
     <div class="sub" id="totalSeconds"></div>
-	<div class="sub" id="totalMilliseconds"></div>
+    <div class="sub" id="totalMilliseconds"></div>
+
+    <div class="footer-love">✨ until our next kiss, hug and sea of love ✨</div>
   </div>
 
   <script>
-
-    const startDate = new Date("2026-05-13T07:00:00Z");
-    const targetDate = new Date("2026-06-26T20:10:00Z");
+    const startDate = new Date("2026-09-21T20:30:00Z");
+    const targetDate = new Date("2026-10-14T20:10:00Z");
 
     function clamp(value, min, max) {
       return Math.min(Math.max(value, min), max);
@@ -158,98 +570,100 @@
 
       return "#" + mixed.map(v => v.toString(16).padStart(2, "0")).join("");
     }
-	
-	function nnn(number) {
-	return String(number).replace(/[0-9]/g, digit => {
-		const map = {
-		"0": "𝟎",
-		"1": "𝟏",
-		"2": "𝟐",
-		"3": "𝟑",
-		"4": "𝟒",
-		"5": "𝟓",
-		"6": "𝟔",
-		"7": "𝟕",
-		"8": "𝟖",
-		"9": "𝟗"
-		};
-	
-		return map[digit];
-	});
-	}	
 
-    function updateSky(diffMs) {
+    function nnn(number) {
+      return String(number).replace(/[0-9]/g, digit => {
+        const map = {
+          "0": "𝟎",
+          "1": "𝟏",
+          "2": "𝟐",
+          "3": "𝟑",
+          "4": "𝟒",
+          "5": "𝟓",
+          "6": "𝟔",
+          "7": "𝟕",
+          "8": "𝟖",
+          "9": "𝟗"
+        };
+        return map[digit];
+      });
+    }
+
+    function updateScene() {
       const now = new Date();
-
       const totalJourney = targetDate - startDate;
       const elapsed = now - startDate;
-
       const progress = clamp(elapsed / totalJourney, 0, 1);
 
-      /*
-        0 = deep night
-        1 = sunrise / bright morning
-      */
-      const topColor = mixColor("050816", "ffd6a5", progress);
-      const middleColor = mixColor("101632", "ffafcc", progress);
-      const bottomColor = mixColor("24173d", "bde0fe", progress);
+      const topColor = mixColor("120b24", "ff9e7a", progress);
+      const middleColor = mixColor("3a1f52", "ff7eb6", progress);
+      const bottomColor = mixColor("ff8fb1", "ffd8a8", progress);
 
       document.body.style.background =
         `linear-gradient(to bottom, ${topColor}, ${middleColor}, ${bottomColor})`;
 
       document.documentElement.style.setProperty(
         "--stars-opacity",
-        0.85 - progress * 0.85
+        (0.82 - progress * 0.75).toFixed(2)
       );
+
+      const seaTop = mixColor("ff9dc1", "ffcf99", progress);
+      const seaBottom = mixColor("5a2f75", "ff7aa8", progress);
+
+      const sea = document.getElementById("sea");
+      sea.style.background = `linear-gradient(to bottom, ${seaTop}, ${seaBottom})`;
 
       const moon = document.getElementById("moon");
       const sun = document.getElementById("sun");
+      const reflection = document.getElementById("reflection");
       const box = document.getElementById("box");
       const title = document.getElementById("title");
       const mainTime = document.getElementById("mainTime");
       const subs = document.querySelectorAll(".sub");
 
       moon.style.opacity = 1 - progress;
-      moon.style.transform = `translateY(${progress * 230}px)`;
+      moon.style.transform = `translateY(${progress * 170}px)`;
 
       sun.style.opacity = progress;
-      sun.style.transform = `translateY(${-progress * 230}px)`;
+      sun.style.transform = `translateY(${(1 - progress) * 25}px)`;
 
-      box.style.background = `rgba(255, 255, 255, ${0.45 + progress * 0.25})`;
+      reflection.style.opacity = 0.3 + progress * 0.5;
+      reflection.style.transform = `translateY(${progress * 20}px) rotate(${3 - progress * 2}deg)`;
+
+      box.style.background = `rgba(255, 255, 255, ${0.14 + progress * 0.16})`;
       box.style.boxShadow =
-        `0 20px 60px rgba(255, 160, 190, ${0.2 + progress * 0.25})`;
+        `0 20px 60px rgba(255, 95, 145, ${0.22 + progress * 0.22}), inset 0 0 0 1px rgba(255,255,255,0.22)`;
 
-      const textColor = mixColor("f4d9ff", "7a4e7f", progress);
-      const mainColor = mixColor("fff0ff", "5e406d", progress);
-      const subColor = mixColor("f2d6ff", "6d5670", progress);
+      const titleColor = mixColor("fff0f8", "8a2f54", progress);
+      const mainColor = mixColor("fff7fb", "6e2142", progress);
+      const subColor = mixColor("ffe6f6", "7a3557", progress);
 
-      title.style.color = textColor;
+      title.style.color = titleColor;
       mainTime.style.color = mainColor;
-
-      subs.forEach(sub => {
-        sub.style.color = subColor;
-      });
+      subs.forEach(sub => sub.style.color = subColor);
     }
 
     function updateCountdown() {
       const now = new Date();
       const diffMs = targetDate - now;
 
-      updateSky(diffMs);
+      updateScene();
 
       if (diffMs <= 0) {
         document.getElementById("mainTime").textContent =
-          "0 days 0 hours 0 minutes 0 seconds";
+          "𝟎 𝖉𝖆𝖞𝖘 𝟎 𝖍 𝟎 𝖒𝖎𝖓 𝟎 𝖘𝖊𝖈";
         document.getElementById("totalHours").textContent =
-          "𝓱𝓸𝓾𝓻𝓼 𝓵𝓮𝓯𝓽: 0";
+          "𝖍𝖔𝖚𝖗𝖘 𝖑𝖊𝖋𝖙: 𝟎";
         document.getElementById("totalMinutes").textContent =
-          "𝓶𝓲𝓷𝓾𝓽𝓮𝓼 𝓵𝓮𝓯𝓽: 0";
+          "𝖒𝖎𝖓𝖚𝖙𝖊𝖘 𝖑𝖊𝖋𝖙: 𝟎";
         document.getElementById("totalSeconds").textContent =
-          "𝓼𝓮𝓬𝓸𝓷𝓭𝓼 𝓵𝓮𝓯𝓽: 0";
+          "𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: 𝟎";
+        document.getElementById("totalMilliseconds").textContent =
+          "𝖒𝖎𝖑𝖑𝖎𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: 𝟎";
         return;
       }
 
-	  const totalMilliseconds = Math.floor(diffMs);
+      const totalMilliseconds = Math.floor(diffMs);
       const totalSeconds = Math.floor(diffMs / 1000);
       const totalMinutes = Math.floor(totalSeconds / 60);
       const totalHours = Math.floor(totalSeconds / 3600);
@@ -270,34 +684,33 @@
 
       document.getElementById("totalSeconds").textContent =
         `𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalSeconds)}`;
-		
+
       document.getElementById("totalMilliseconds").textContent =
-        `𝖒𝖎𝖑𝖑𝖎𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalMilliseconds)}`;		
+        `𝖒𝖎𝖑𝖑𝖎𝖘𝖊𝖈𝖔𝖓𝖉𝖘 𝖑𝖊𝖋𝖙: ${nnn(totalMilliseconds)}`;
     }
 
     updateCountdown();
-    setInterval(updateCountdown, 10);
+    setInterval(updateCountdown, 30);
 
     function createHeart() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
 
-      const emojis = ["💗", "✨", "⭐", "🪐", "🌚", "🌞"];
+      const emojis = ["💗", "💖", "💕", "✨", "💋", "🌊", "🌸"];
       heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
 
       heart.style.left = Math.random() * 100 + "vw";
-      heart.style.animationDuration = (10 + Math.random() * 4) + "s";
+      heart.style.animationDuration = (8 + Math.random() * 5) + "s";
       heart.style.fontSize = (12 + Math.random() * 20) + "px";
 
       document.body.appendChild(heart);
 
       setTimeout(() => {
         heart.remove();
-      }, 7000);
+      }, 9000);
     }
 
-    setInterval(createHeart, 300);
+    setInterval(createHeart, 320);
   </script>
-
 </body>
 </html>
